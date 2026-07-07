@@ -494,26 +494,47 @@ function clearSearch(){
 
 // ── Conexión con el backend de Apps Script vía JSONP ──────────────────────
 // (JSONP evita problemas de CORS al llamar desde un dominio externo)
+// Si falla por tiempo de espera o de red (ej. Apps Script "despertando"),
+// reintenta sola hasta 3 veces en total, en silencio, con el mismo spinner
+// de siempre. Solo si las 3 fallan se muestra el error al usuario.
 var EXEC_URL = 'https://script.google.com/macros/s/AKfycbxXJOWyA6auhYnBJeo7JTmuxBtkrjLwBrS1ksd0XY66yNGiv3Q10gD6Gt7t1xAxXdXT/exec';
 
 function jsonpSearch(query, onSuccess, onError){
+  intentarJsonp(query, onSuccess, onError, 1);
+}
+
+function intentarJsonp(query, onSuccess, onError, intento){
   var cbName = 'cb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
   var script = document.createElement('script');
-  var timeout = setTimeout(function(){
-    cleanup();
-    onError(new Error('timeout'));
-  }, 15000);
+  var yaResuelto = false;
+
+  var timeout = setTimeout(function(){ fallo(); }, 15000);
+
   function cleanup(){
     clearTimeout(timeout);
     delete window[cbName];
     if(script.parentNode) script.parentNode.removeChild(script);
   }
+
+  function fallo(){
+    if(yaResuelto) return;
+    yaResuelto = true;
+    cleanup();
+    if(intento < 3){
+      intentarJsonp(query, onSuccess, onError, intento + 1);
+    } else {
+      onError(new Error('sin respuesta tras varios intentos'));
+    }
+  }
+
   window[cbName] = function(data){
+    if(yaResuelto) return;
+    yaResuelto = true;
     cleanup();
     onSuccess(data);
   };
   script.src = EXEC_URL + '?q=' + encodeURIComponent(query) + '&callback=' + cbName;
-  script.onerror = function(){ cleanup(); onError(new Error('network')); };
+  script.onerror = function(){ fallo(); };
   document.body.appendChild(script);
 }
 
