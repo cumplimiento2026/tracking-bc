@@ -126,26 +126,28 @@ body::before{
 header{
   position:sticky;top:0;
   z-index:10;
-  background:rgba(13,19,32,.85);
+  background:rgba(13,19,32,.9);
   border-bottom:1px solid var(--border);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  padding:0 20px;height:58px;
+  padding:calc(env(safe-area-inset-top) + 14px) 20px 14px;
+  min-height:58px;
   display:flex;align-items:center;justify-content:space-between;
 }
 .logo{
   font-family:'Space Grotesk',sans-serif;
-  font-size:15px;font-weight:700;letter-spacing:-.3px;
-  display:flex;align-items:center;gap:9px;
+  font-size:17px;font-weight:700;letter-spacing:-.3px;
+  display:flex;align-items:center;gap:10px;
 }
-.logo img{width:28px;height:28px;border-radius:50%;box-shadow:0 0 0 1px var(--border);}
+.logo img{width:32px;height:32px;border-radius:50%;box-shadow:0 0 0 1px var(--border);}
 .logo b{color:var(--red-light);}
-.logo span{color:var(--text-muted);font-weight:400;font-size:13px;}
+.logo span{color:var(--text-muted);font-weight:400;font-size:14px;}
 .secure-badge{
   display:flex;align-items:center;gap:5px;
-  font-size:10.5px;color:var(--green);
+  font-size:11px;color:var(--green);
   background:rgba(34,197,94,.08);
   border:1px solid rgba(34,197,94,.2);
-  padding:4px 9px;border-radius:20px;
+  padding:4px 10px;border-radius:20px;
+  flex-shrink:0;
 }
 
 main{
@@ -371,6 +373,7 @@ footer b{color:var(--gold);font-weight:700;}
       <span style="font-size:11px;color:var(--text-dim);align-self:center;">Ejemplos:</span>
       <div class="hint-chip" onclick="fillAndSearch('65710044')">Lote: 65710044</div>
       <div class="hint-chip" onclick="fillAndSearch('F01738')">Últimos 6 del VIN</div>
+      <div class="hint-chip" id="clearChip" onclick="clearSearch()" style="display:none;margin-left:auto;color:var(--text-muted);">✕ Limpiar</div>
     </div>
   </div>
 
@@ -417,6 +420,7 @@ var TIMELINE = [
 
 var STATUS_STYLE = {
   'TRANSITO MARITIMO':'st-transit','PUERTO GT':'st-puertogt',
+  'PUERTO ACAJUTLA':'st-puertogt','RUTA A FRONTERA':'st-frontera',
   'EN LISTA DE CARGA':'st-lista','CARGADO':'st-cargado',
   'RUTA ALMACENADORA':'st-ruta','MOVIMIENTO':'st-movimiento',
   'FRONTERA':'st-frontera','REVISION EN FRONTERA':'st-frontera',
@@ -443,13 +447,29 @@ function doSearch(){
 
   var btn = document.getElementById('btnSearch');
   btn.classList.add('loading');
+  document.getElementById('clearChip').style.display='inline-block';
 
   document.getElementById('statusArea').innerHTML=
     '<div class="state-msg"><div class="spinner"></div><p>Buscando tu vehículo...</p></div>';
   document.getElementById('result').style.display='none';
   document.getElementById('result').innerHTML='';
 
+  // Los lotes (y sufijos de VIN cortos) a veces no aparecen en el primer intento.
+  // Si el texto buscado es corto (típico de un lote) y el primer intento viene
+  // vacío, se reintenta una vez en silencio, sin mostrar ningún mensaje extra.
+  var pareceLote = raw.replace(/[\s-]/g,'').length <= 9;
+
   jsonpSearch(raw, function(rows){
+      if((!rows || rows.length===0) && pareceLote){
+        jsonpSearch(raw, function(rows2){
+          btn.classList.remove('loading');
+          showResults(rows2, raw);
+        }, function(e){
+          btn.classList.remove('loading');
+          showResults(rows, raw);
+        });
+        return;
+      }
       btn.classList.remove('loading');
       showResults(rows, raw);
     }, function(e){
@@ -458,6 +478,18 @@ function doSearch(){
         'Por favor intenta de nuevo en unos momentos.');
       console.error(e);
     });
+}
+
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('clearChip').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('result').innerHTML='';
+  document.getElementById('statusArea').innerHTML=
+    '<div class="state-msg" style="opacity:.5;">'
+    +'<div style="font-size:26px;margin-bottom:8px;">📦</div>'
+    +'Ingresa tu número de lote o VIN arriba para comenzar</div>';
+  document.getElementById('searchInput').focus();
 }
 
 // ── Conexión con el backend de Apps Script vía JSONP ──────────────────────
@@ -567,23 +599,56 @@ function buildCard(r, cardIdx){
   }
 
   html+='</div>';
-  html+=buildTimeline(st);
+  html+=buildTimeline(st, r.HOJA);
   html+='</div>';
   return html;
 }
 
-function buildTimeline(currentStatus){
-  var currentIdx = -1;
-  TIMELINE.forEach(function(s,i){ if(s.key === currentStatus) currentIdx=i; });
+function buildTimeline(currentStatus, hoja){
+  var esLoad = /LOAD/i.test(hoja||'');
 
-  var total = TIMELINE.length;
+  var timeline;
+  if(esLoad){
+    // En hojas LOAD: se agrega "Ruta a frontera" antes de "Frontera", y el
+    // paso de puerto es uno u otro (nunca los dos), según cuál esté
+    // seleccionado como estado actual del vehículo.
+    var pasoPuerto = (currentStatus === 'PUERTO ACAJUTLA')
+      ? {key:'PUERTO ACAJUTLA', label:'Llegó a Puerto Acajutla'}
+      : {key:'PUERTO GT',       label:'Llegó a Puerto de Guatemala'};
+
+    timeline = [
+      {key:'PTE TITULO',          label:'Pendiente de título'},
+      {key:'TITULO RECIBIDO',     label:'Título recibido'},
+      {key:'EN LISTA DE CARGA',   label:'En lista de carga'},
+      {key:'ADUANA',              label:'En aduana'},
+      {key:'CARGADO',             label:'Vehículo cargado'},
+      {key:'MOVIMIENTO',          label:'En movimiento'},
+      {key:'TRANSITO MARITIMO',   label:'En tránsito marítimo'},
+      pasoPuerto,
+      {key:'PILOTO',              label:'Con piloto asignado'},
+      {key:'RUTA A FRONTERA',     label:'En ruta a frontera'},
+      {key:'FRONTERA',            label:'En frontera'},
+      {key:'REVISION EN FRONTERA',label:'Revisión en frontera'},
+      {key:'RUTA ALMACENADORA',   label:'En ruta a almacenadora'},
+      {key:'DESCARGADO',          label:'¡Vehículo entregado! 🎉'}
+    ];
+  } else {
+    // Hojas TOW: se queda exactamente igual que siempre (no hay puertos ni
+    // "ruta a frontera" en este tipo de hoja).
+    timeline = TIMELINE;
+  }
+
+  var currentIdx = -1;
+  timeline.forEach(function(s,i){ if(s.key === currentStatus) currentIdx=i; });
+
+  var total = timeline.length;
   var pct = currentIdx>=0 ? Math.round((currentIdx/(total-1))*100) : 0;
 
   var html='<div class="timeline-section">'
     +'<div class="timeline-title">📍 Línea de tiempo del proceso</div>'
     +'<div class="timeline" style="--fill-pct:'+pct+'%">';
 
-  TIMELINE.forEach(function(step, i){
+  timeline.forEach(function(step, i){
     var isDone    = (currentIdx>=0 && i < currentIdx);
     var isCurrent = (i === currentIdx);
     var cls = isDone?'done':isCurrent?'current':'';
@@ -606,6 +671,7 @@ function statusLabel(st){
   'EN LISTA DE CARGA':'En Lista de Carga','ADUANA':'En Aduana',
   'CARGADO':'Vehículo Cargado','MOVIMIENTO':'En Movimiento',
   'TRANSITO MARITIMO':'Tránsito Marítimo','PUERTO GT':'Llegó a Puerto GT',
+  'PUERTO ACAJUTLA':'Llegó a Puerto Acajutla','RUTA A FRONTERA':'Ruta a Frontera',
   'PILOTO':'Con Piloto Asignado','FRONTERA':'En Frontera',
   'REVISION EN FRONTERA':'Revisión en Frontera','RUTA ALMACENADORA':'Ruta Almacenadora',
   'DESCARGADO':'¡Vehículo Entregado! 🎉'
