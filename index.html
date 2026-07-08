@@ -377,7 +377,7 @@ var TIMELINE = [
 {key:'PTE TITULO', label:'Pendiente de título'},
 {key:'TITULO RECIBIDO', label:'Título recibido'},
 {key:'EN LISTA DE CARGA', label:'En lista de carga'},
-{key:'ADUANA', label:'En aduana'},
+{key:'ADUANA', label:'En aduana USA'},
 {key:'CARGADO', label:'Vehículo cargado'},
 {key:'MOVIMIENTO', label:'En movimiento'},
 {key:'TRANSITO MARITIMO', label:'En tránsito marítimo'},
@@ -556,8 +556,8 @@ html+='<div class="info-item"><div class="info-label">VIN</div><div class="info-
 if(r.ALMACENADORA && r.ALMACENADORA.trim()){
 html+='<div class="info-item"><div class="info-label">Almacenadora</div><div class="info-value">'+esc(r.ALMACENADORA)+'</div></div>';
 }
-if(r.HOJA){
-html+='<div class="info-item"><div class="info-label">Hoja</div><div class="info-value">'+esc(r.HOJA)+'</div></div>';
+if(r.ESTADO){
+html+='<div class="info-item"><div class="info-label">Estado</div><div class="info-value">'+esc(r.ESTADO)+'</div></div>';
 }
 if(containerHtml){
 html+='<div class="info-item" style="grid-column:1/-1"><div class="info-label">Contenedor / Booking</div><div class="info-value">'+containerHtml+'</div></div>';
@@ -581,7 +581,7 @@ timeline = [
 {key:'PTE TITULO', label:'Pendiente de título'},
 {key:'TITULO RECIBIDO', label:'Título recibido'},
 {key:'EN LISTA DE CARGA', label:'En lista de carga'},
-{key:'ADUANA', label:'En aduana'},
+{key:'ADUANA', label:'En aduana USA'},
 {key:'CARGADO', label:'Vehículo cargado'},
 {key:'MOVIMIENTO', label:'En movimiento'},
 {key:'TRANSITO MARITIMO', label:'En tránsito marítimo'},
@@ -623,7 +623,7 @@ return html;
 function statusLabel(st){
 var map={
 'PTE TITULO':'Pte. Título','TITULO RECIBIDO':'Título Recibido',
-'EN LISTA DE CARGA':'En Lista de Carga','ADUANA':'En Aduana',
+'EN LISTA DE CARGA':'En Lista de Carga','ADUANA':'En Aduana USA',
 'CARGADO':'Vehículo Cargado','MOVIMIENTO':'En Movimiento',
 'TRANSITO MARITIMO':'Tránsito Marítimo','PUERTO GT':'Llegó a Puerto GT',
 'PUERTO ACAJUTLA':'Llegó a Puerto Acajutla','RUTA A FRONTERA':'Ruta a Frontera',
