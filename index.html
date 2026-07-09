@@ -140,6 +140,20 @@ border:1px solid rgba(34,197,94,.2);
 padding:4px 10px;border-radius:20px;
 flex-shrink:0;
 }
+.header-actions{
+display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.lang-toggle{
+display:flex;align-items:center;gap:5px;
+font-size:11px;font-weight:600;color:var(--text-muted);
+background:rgba(255,255,255,.05);
+border:1px solid var(--border);
+padding:4px 10px;border-radius:20px;
+cursor:pointer;flex-shrink:0;
+font-family:inherit;
+transition:background .2s ease,color .2s ease;
+}
+.lang-toggle:hover{background:rgba(255,255,255,.1);color:var(--text);}
 main{
 position:relative;z-index:1;
 max-width:680px;margin:0 auto;
@@ -327,40 +341,43 @@ footer b{color:var(--gold);font-weight:700;}
 <img src="data:image/png;base64,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" alt="logo">
 Tracking <b>B&C</b> <span>Luxury Auto</span>
 </div>
+<div class="header-actions">
 <div class="secure-badge">🔒 Seguro</div>
+<button id="langToggle" class="lang-toggle" onclick="toggleLang()" type="button">🌐 EN</button>
+</div>
 </header>
 <main>
 <div class="hero">
-<h1>Rastrea tu <em>vehículo</em></h1>
-<p>Ingresa el número de lote o VIN de tu vehículo<br>para ver el estado actual de tu carga.</p>
+<h1 data-i18n="hero_title">Rastrea tu <em>vehículo</em></h1>
+<p data-i18n="hero_sub">Ingresa el número de lote o VIN de tu vehículo<br>para ver el estado actual de tu carga.</p>
 </div>
 <div class="search-card">
-<label>Número de lote o VIN</label>
+<label data-i18n="search_label">Número de lote o VIN</label>
 <div class="search-row">
 <input type="text" id="searchInput" class="search-input"
 placeholder="Ej: 65710044 o ML32F4FJ0LHF01738"
 autocomplete="off" spellcheck="false" autocorrect="off">
 <button class="btn-search" id="btnSearch" onclick="doSearch()">
 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-Buscar
+<span data-i18n="search_btn">Buscar</span>
 </button>
 </div>
 <div class="search-hint-row">
-<span style="font-size:11px;color:var(--text-dim);align-self:center;">Ejemplos:</span>
-<div class="hint-chip" onclick="fillAndSearch('65710044')">Lote: 65710044</div>
-<div class="hint-chip" onclick="fillAndSearch('F01738')">Últimos 6 del VIN</div>
-<div class="hint-chip" id="clearChip" onclick="clearSearch()" style="display:none;margin-left:auto;color:var(--text-muted);">✕ Limpiar</div>
+<span style="font-size:11px;color:var(--text-dim);align-self:center;" data-i18n="examples_label">Ejemplos:</span>
+<div class="hint-chip" onclick="fillAndSearch('65710044')"><span data-i18n="hint_lote">Lote: 65710044</span></div>
+<div class="hint-chip" onclick="fillAndSearch('F01738')"><span data-i18n="hint_vin">Últimos 6 del VIN</span></div>
+<div class="hint-chip" id="clearChip" onclick="clearSearch()" style="display:none;margin-left:auto;color:var(--text-muted);"><span data-i18n="hint_clear">✕ Limpiar</span></div>
 </div>
 </div>
 <div id="statusArea">
 <div class="state-msg" style="opacity:.5;">
 <div style="font-size:26px;margin-bottom:8px;">📦</div>
-Ingresa tu número de lote o VIN arriba para comenzar
+<span data-i18n="initial_hint">Ingresa tu número de lote o VIN arriba para comenzar</span>
 </div>
 </div>
 <div id="result"></div>
 <footer>
-Powered by <b>B&C Luxury Auto</b> · Sistema de rastreo
+<span data-i18n="footer_text">Powered by <b>B&C Luxury Auto</b> · Sistema de rastreo</span>
 </footer>
 </main>
 </div>
@@ -372,22 +389,83 @@ document.getElementById('splash').classList.add('hide');
 document.getElementById('app').classList.add('ready');
 }, 900);
 });
+// ── Idioma / traducción ───────────────────────────────────────────────────
+var LANG = 'es';
+var lastRows = null, lastTerm = '';
+var I18N = {
+hero_title:{es:'Rastrea tu <em>vehículo</em>', en:'Track your <em>vehicle</em>'},
+hero_sub:{es:'Ingresa el número de lote o VIN de tu vehículo<br>para ver el estado actual de tu carga.',
+en:'Enter your vehicle\'s lot number or VIN<br>to see the current status of your shipment.'},
+search_label:{es:'Número de lote o VIN', en:'Lot number or VIN'},
+search_btn:{es:'Buscar', en:'Search'},
+examples_label:{es:'Ejemplos:', en:'Examples:'},
+hint_lote:{es:'Lote: 65710044', en:'Lot: 65710044'},
+hint_vin:{es:'Últimos 6 del VIN', en:'Last 6 of VIN'},
+hint_clear:{es:'✕ Limpiar', en:'✕ Clear'},
+initial_hint:{es:'Ingresa tu número de lote o VIN arriba para comenzar',
+en:'Enter your lot number or VIN above to get started'},
+footer_text:{es:'Powered by <b>B&C Luxury Auto</b> · Sistema de rastreo',
+en:'Powered by <b>B&C Luxury Auto</b> · Tracking system'},
+lbl_lote:{es:'Lote', en:'Lot'},
+lbl_almacenadora:{es:'Almacenadora', en:'Warehouse'},
+lbl_estado:{es:'Estado', en:'State'},
+lbl_zarpe:{es:'Fecha de Zarpe', en:'Departure Date'},
+lbl_llegada:{es:'Fecha Llegada a Puerto', en:'Port Arrival Date'},
+lbl_container:{es:'Contenedor / Booking', en:'Container / Booking'},
+timeline_title:{es:'Línea de tiempo del proceso', en:'Process timeline'},
+current_badge:{es:'ACTUAL', en:'CURRENT'},
+multi_found_pre:{es:'Se encontraron', en:'Found'},
+multi_found_post:{es:'vehículos:', en:'vehicles:'},
+nf_title:{es:'No encontramos tu vehículo', en:'We couldn\'t find your vehicle'},
+nf_body1:{es:'No se encontró ningún vehículo con el lote o VIN', en:'No vehicle was found with the lot number or VIN'},
+nf_body2:{es:'Verifica que el número sea correcto o contáctanos.',
+en:'Please check the number is correct or contact us.'},
+msg_empty:{es:'Ingresa un número de lote o VIN para buscar', en:'Enter a lot number or VIN to search'},
+msg_searching:{es:'Buscando tu vehículo...', en:'Searching for your vehicle...'},
+msg_conn_error:{es:'Error al conectar con el servidor', en:'Error connecting to the server'},
+msg_conn_error_sub:{es:'Por favor intenta de nuevo en unos momentos.',
+en:'Please try again in a moment.'}
+};
+function t(key){
+return (I18N[key] && I18N[key][LANG]) || (I18N[key] && I18N[key].es) || key;
+}
+function translateStatic(){
+document.querySelectorAll('[data-i18n]').forEach(function(el){
+var key = el.getAttribute('data-i18n');
+if(I18N[key]) el.innerHTML = I18N[key][LANG];
+});
+document.getElementById('langToggle').innerHTML = LANG==='es' ? '🌐 EN' : '🌐 ES';
+document.documentElement.lang = LANG;
+}
+function toggleLang(){
+LANG = (LANG==='es') ? 'en' : 'es';
+translateStatic();
+if(lastRows && lastRows.length){
+showResults(lastRows, lastTerm);
+}
+}
+translateStatic();
 // ── TIMELINE DE ESTADOS ───────────────────────────────────────────────────
-var TIMELINE = [
-{key:'PTE TITULO', label:'Pendiente de título'},
-{key:'TITULO RECIBIDO', label:'Título recibido'},
-{key:'EN LISTA DE CARGA', label:'En lista de carga'},
-{key:'ADUANA', label:'En aduana USA'},
-{key:'CARGADO', label:'Vehículo cargado'},
-{key:'MOVIMIENTO', label:'En movimiento'},
-{key:'TRANSITO MARITIMO', label:'En tránsito marítimo'},
-{key:'PUERTO GT', label:'Llegó a Puerto de Guatemala'},
-{key:'PILOTO', label:'Con piloto asignado'},
-{key:'FRONTERA', label:'En frontera'},
-{key:'REVISION EN FRONTERA',label:'Revisión en frontera'},
-{key:'RUTA ALMACENADORA', label:'En ruta a almacenadora'},
-{key:'DESCARGADO', label:'¡Vehículo entregado! 🎉'}
-];
+var STEP_LABELS = {
+'PTE TITULO':          {es:'Pendiente de título', en:'Title pending'},
+'TITULO RECIBIDO':     {es:'Título recibido', en:'Title received'},
+'EN LISTA DE CARGA':   {es:'En lista de carga', en:'On load list'},
+'ADUANA':              {es:'En aduana USA', en:'At US customs'},
+'CARGADO':             {es:'Vehículo cargado', en:'Vehicle loaded'},
+'MOVIMIENTO':          {es:'En movimiento', en:'In transit (road)'},
+'TRANSITO MARITIMO':   {es:'En tránsito marítimo', en:'Ocean transit'},
+'PUERTO GT':           {es:'Llegó a Puerto de Guatemala', en:'Arrived at Guatemala Port'},
+'PUERTO ACAJUTLA':     {es:'Llegó a Puerto Acajutla', en:'Arrived at Acajutla Port'},
+'PILOTO':              {es:'Con piloto asignado', en:'Driver assigned'},
+'RUTA A FRONTERA':     {es:'En ruta a frontera', en:'En route to border'},
+'FRONTERA':            {es:'En frontera', en:'At the border'},
+'REVISION EN FRONTERA':{es:'Revisión en frontera', en:'Border inspection'},
+'RUTA ALMACENADORA':   {es:'En ruta a almacenadora', en:'En route to warehouse'},
+'DESCARGADO':          {es:'¡Vehículo entregado! 🎉', en:'Vehicle delivered! 🎉'}
+};
+var TIMELINE_KEYS_TOW = ['PTE TITULO','TITULO RECIBIDO','EN LISTA DE CARGA','ADUANA',
+'CARGADO','MOVIMIENTO','TRANSITO MARITIMO','PUERTO GT','PILOTO','FRONTERA',
+'REVISION EN FRONTERA','RUTA ALMACENADORA','DESCARGADO'];
 var STATUS_STYLE = {
 'TRANSITO MARITIMO':'st-transit','PUERTO GT':'st-puertogt',
 'PUERTO ACAJUTLA':'st-puertogt','RUTA A FRONTERA':'st-frontera',
@@ -408,14 +486,14 @@ doSearch();
 function doSearch(){
 var raw = document.getElementById('searchInput').value.trim();
 if(!raw){
-showMsg('⚠️','Ingresa un número de lote o VIN para buscar','');
+showMsg('⚠️',t('msg_empty'),'');
 return;
 }
 var btn = document.getElementById('btnSearch');
 btn.classList.add('loading');
 document.getElementById('clearChip').style.display='inline-block';
 document.getElementById('statusArea').innerHTML=
-'<div class="state-msg"><div class="spinner"></div><p>Buscando tu vehículo...</p></div>';
+'<div class="state-msg"><div class="spinner"></div><p>'+t('msg_searching')+'</p></div>';
 document.getElementById('result').style.display='none';
 document.getElementById('result').innerHTML='';
 // Los lotes (y sufijos de VIN cortos) a veces no aparecen en el primer intento.
@@ -437,12 +515,12 @@ btn.classList.remove('loading');
 showResults(rows, raw);
 }, function(e){
 btn.classList.remove('loading');
-showMsg('⚠️','Error al conectar con el servidor',
-'Por favor intenta de nuevo en unos momentos.');
+showMsg('⚠️',t('msg_conn_error'),t('msg_conn_error_sub'));
 console.error(e);
 });
 }
 function clearSearch(){
+lastRows = null; lastTerm = '';
 document.getElementById('searchInput').value='';
 document.getElementById('clearChip').style.display='none';
 document.getElementById('result').style.display='none';
@@ -450,7 +528,7 @@ document.getElementById('result').innerHTML='';
 document.getElementById('statusArea').innerHTML=
 '<div class="state-msg" style="opacity:.5;">'
 +'<div style="font-size:26px;margin-bottom:8px;">📦</div>'
-+'Ingresa tu número de lote o VIN arriba para comenzar</div>';
++t('initial_hint')+'</div>';
 document.getElementById('searchInput').focus();
 }
 // ── Conexión con el backend de Apps Script vía JSONP ──────────────────────
@@ -499,20 +577,21 @@ document.getElementById('statusArea').innerHTML=
 document.getElementById('result').style.display='none';
 }
 function showResults(rows, term){
+lastRows = rows; lastTerm = term;
 document.getElementById('statusArea').innerHTML='';
 if(!rows || rows.length===0){
 document.getElementById('statusArea').innerHTML=
 '<div class="not-found">'
 +'<div class="not-found-icon">🔍</div>'
-+'<h3>No encontramos tu vehículo</h3>'
-+'<p>No se encontró ningún vehículo con el lote o VIN <strong>"'+esc(term)+'"</strong>.<br>'
-+'Verifica que el número sea correcto o contáctanos.</p>'
++'<h3>'+t('nf_title')+'</h3>'
++'<p>'+t('nf_body1')+' <strong>"'+esc(term)+'"</strong>.<br>'
++t('nf_body2')+'</p>'
 +'</div>';
 return;
 }
 var html='';
 if(rows.length>1){
-html+='<div class="multi-label">Se encontraron <strong>'+rows.length+'</strong> vehículos:</div>';
+html+='<div class="multi-label">'+t('multi_found_pre')+' <strong>'+rows.length+'</strong> '+t('multi_found_post')+'</div>';
 }
 rows.forEach(function(r, idx){
 html+=buildCard(r, idx);
@@ -548,19 +627,27 @@ var html=
 +'</div>'
 +'<div class="vehicle-info">';
 if(r.LOTE && r.LOTE.trim() && r.LOTE.trim()!=='nan'){
-html+='<div class="info-item"><div class="info-label">Lote</div><div class="info-value mono">'+esc(r.LOTE)+'</div></div>';
+html+='<div class="info-item"><div class="info-label">'+t('lbl_lote')+'</div><div class="info-value mono">'+esc(r.LOTE)+'</div></div>';
 }
 if(r.VIN && r.VIN.trim()){
 html+='<div class="info-item"><div class="info-label">VIN</div><div class="info-value mono">'+esc(r.VIN)+'</div></div>';
 }
 if(r.ALMACENADORA && r.ALMACENADORA.trim()){
-html+='<div class="info-item"><div class="info-label">Almacenadora</div><div class="info-value">'+esc(r.ALMACENADORA)+'</div></div>';
+html+='<div class="info-item"><div class="info-label">'+t('lbl_almacenadora')+'</div><div class="info-value">'+esc(r.ALMACENADORA)+'</div></div>';
 }
 if(r.ESTADO){
-html+='<div class="info-item"><div class="info-label">Estado</div><div class="info-value">'+esc(r.ESTADO)+'</div></div>';
+html+='<div class="info-item"><div class="info-label">'+t('lbl_estado')+'</div><div class="info-value">'+esc(r.ESTADO)+'</div></div>';
+}
+var fechaZarpe = LANG==='en' ? r.ETD_EN : r.ETD_ES;
+if(fechaZarpe && fechaZarpe.trim()){
+html+='<div class="info-item"><div class="info-label">'+t('lbl_zarpe')+'</div><div class="info-value">'+esc(fechaZarpe)+'</div></div>';
+}
+var fechaLlegada = LANG==='en' ? r.ETA_EN : r.ETA_ES;
+if(fechaLlegada && fechaLlegada.trim()){
+html+='<div class="info-item"><div class="info-label">'+t('lbl_llegada')+'</div><div class="info-value">'+esc(fechaLlegada)+'</div></div>';
 }
 if(containerHtml){
-html+='<div class="info-item" style="grid-column:1/-1"><div class="info-label">Contenedor / Booking</div><div class="info-value">'+containerHtml+'</div></div>';
+html+='<div class="info-item" style="grid-column:1/-1"><div class="info-label">'+t('lbl_container')+'</div><div class="info-value">'+containerHtml+'</div></div>';
 }
 html+='</div>';
 html+=buildTimeline(st, r.HOJA);
@@ -569,41 +656,27 @@ return html;
 }
 function buildTimeline(currentStatus, hoja){
 var esLoad = /LOAD/i.test(hoja||'');
-var timeline;
+var keys;
 if(esLoad){
 // En hojas LOAD: se agrega "Ruta a frontera" antes de "Frontera", y el
 // paso de puerto es uno u otro (nunca los dos), según cuál esté
 // seleccionado como estado actual del vehículo.
-var pasoPuerto = (currentStatus === 'PUERTO ACAJUTLA')
-? {key:'PUERTO ACAJUTLA', label:'Llegó a Puerto Acajutla'}
-: {key:'PUERTO GT', label:'Llegó a Puerto de Guatemala'};
-timeline = [
-{key:'PTE TITULO', label:'Pendiente de título'},
-{key:'TITULO RECIBIDO', label:'Título recibido'},
-{key:'EN LISTA DE CARGA', label:'En lista de carga'},
-{key:'ADUANA', label:'En aduana USA'},
-{key:'CARGADO', label:'Vehículo cargado'},
-{key:'MOVIMIENTO', label:'En movimiento'},
-{key:'TRANSITO MARITIMO', label:'En tránsito marítimo'},
-pasoPuerto,
-{key:'PILOTO', label:'Con piloto asignado'},
-{key:'RUTA A FRONTERA', label:'En ruta a frontera'},
-{key:'FRONTERA', label:'En frontera'},
-{key:'REVISION EN FRONTERA',label:'Revisión en frontera'},
-{key:'RUTA ALMACENADORA', label:'En ruta a almacenadora'},
-{key:'DESCARGADO', label:'¡Vehículo entregado! 🎉'}
-];
+var puertoKey = (currentStatus === 'PUERTO ACAJUTLA') ? 'PUERTO ACAJUTLA' : 'PUERTO GT';
+keys = ['PTE TITULO','TITULO RECIBIDO','EN LISTA DE CARGA','ADUANA','CARGADO',
+'MOVIMIENTO','TRANSITO MARITIMO',puertoKey,'PILOTO','RUTA A FRONTERA','FRONTERA',
+'REVISION EN FRONTERA','RUTA ALMACENADORA','DESCARGADO'];
 } else {
 // Hojas TOW: se queda exactamente igual que siempre (no hay puertos ni
 // "ruta a frontera" en este tipo de hoja).
-timeline = TIMELINE;
+keys = TIMELINE_KEYS_TOW;
 }
+var timeline = keys.map(function(k){ return {key:k, label:STEP_LABELS[k][LANG]}; });
 var currentIdx = -1;
 timeline.forEach(function(s,i){ if(s.key === currentStatus) currentIdx=i; });
 var total = timeline.length;
 var pct = currentIdx>=0 ? Math.round((currentIdx/(total-1))*100) : 0;
 var html='<div class="timeline-section">'
-+'<div class="timeline-title">📍 Línea de tiempo del proceso</div>'
++'<div class="timeline-title">📍 '+t('timeline_title')+'</div>'
 +'<div class="timeline" style="--fill-pct:'+pct+'%">';
 timeline.forEach(function(step, i){
 var isDone = (currentIdx>=0 && i < currentIdx);
@@ -613,7 +686,7 @@ var dotIcon = isDone?'✓':isCurrent?'●':'';
 html+='<div class="tl-step '+cls+'" style="--i:'+i+'">'
 +'<div class="tl-dot">'+dotIcon+'</div>'
 +'<div class="tl-label">'+step.label
-+(isCurrent?'<span class="tl-current-badge">ACTUAL</span>':'')
++(isCurrent?'<span class="tl-current-badge">'+t('current_badge')+'</span>':'')
 +'</div>'
 +'</div>';
 });
@@ -621,17 +694,7 @@ html+='</div></div>';
 return html;
 }
 function statusLabel(st){
-var map={
-'PTE TITULO':'Pte. Título','TITULO RECIBIDO':'Título Recibido',
-'EN LISTA DE CARGA':'En Lista de Carga','ADUANA':'En Aduana USA',
-'CARGADO':'Vehículo Cargado','MOVIMIENTO':'En Movimiento',
-'TRANSITO MARITIMO':'Tránsito Marítimo','PUERTO GT':'Llegó a Puerto GT',
-'PUERTO ACAJUTLA':'Llegó a Puerto Acajutla','RUTA A FRONTERA':'Ruta a Frontera',
-'PILOTO':'Con Piloto Asignado','FRONTERA':'En Frontera',
-'REVISION EN FRONTERA':'Revisión en Frontera','RUTA ALMACENADORA':'Ruta Almacenadora',
-'DESCARGADO':'¡Vehículo Entregado! 🎉'
-};
-return map[st]||st||'—';
+return (STEP_LABELS[st] && STEP_LABELS[st][LANG]) || st || '—';
 }
 function esc(s){
 return String(s||'')
