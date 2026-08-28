@@ -394,12 +394,21 @@ footer b{color:var(--gold);font-weight:700;}
 
 <script>
 // ── Ocultar splash cuando la app esté lista ──────────────────────────────
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    document.getElementById('splash').classList.add('hide');
-    document.getElementById('app').classList.add('ready');
-  }, 900);
-});
+// (usa DOMContentLoaded en vez de window.load para no depender de que
+// terminen de cargar recursos pesados de fondo como el ícono del manifest;
+// además lleva una red de seguridad por si algún evento no llega a disparar)
+function ocultarSplash(){
+  var sp = document.getElementById('splash');
+  var ap = document.getElementById('app');
+  if(sp) sp.classList.add('hide');
+  if(ap) ap.classList.add('ready');
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(ocultarSplash, 400); });
+} else {
+  setTimeout(ocultarSplash, 400);
+}
+setTimeout(ocultarSplash, 4000);
 
 // ── TIMELINE DE ESTADOS ───────────────────────────────────────────────────
 var TIMELINE = [
